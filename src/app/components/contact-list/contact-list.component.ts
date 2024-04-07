@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, inject } from '@angular/core';
 import { Contact } from '../../services/types';
 import { ContactService } from '../../services/contact.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 const fakeData = [
   {
@@ -55,18 +56,39 @@ const fakeData = [
 export class ContactListComponent implements OnInit {
   public contactList: Contact[] = fakeData;
   public isShowingModalDelete: boolean = false;
+  public selectedOptions: string[] = ['person'];
+  private modalService = inject(NgbModal);
+
 
   constructor(private contactService: ContactService) {}
 
   ngOnInit(): void {
     this.contactService.getContactList()
-    .subscribe(response => this.contactList = response);
+    .subscribe(response => this.contactList = fakeData);
   }
 
   public handleDeleteContact(contactId: string) {
     console.log(contactId);
     this.isShowingModalDelete = true;
   }
+
+  public open(content: TemplateRef<any>) {
+		this.modalService.open(content)
+  };
+
+  public toggleOption(option: string): void {
+    const index = this.selectedOptions.indexOf(option);
+    if (index !== -1) {
+      this.selectedOptions.splice(index, 1); // Remove option if already selected
+    } else {
+      this.selectedOptions.push(option); // Add option if not selected
+    }
+  }
+
+  public isSelected(option: string): boolean {
+    return this.selectedOptions.includes(option);
+  }
+	
 
 
 }

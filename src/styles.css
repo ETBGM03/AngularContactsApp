@@ -1,9 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 :root {
-    --bg-global : #191c32;
+  --bg-global: #191c32;
 }
 
 body {
-    background-color: var(--bg-global);
-  }
-  
+  background-color: var(--bg-global);
+}
+
+.selected {
+  background-color: #ddd;
+}

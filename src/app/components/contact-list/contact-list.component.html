@@ -5,16 +5,17 @@
         type="button"
         class="btn btn-primary my-2"
         data-bs-toggle="modal"
-        data-bs-target="#createModal"
+        data-bs-target="#addContactModal"
+        (click)="open(addContactModal)"
       >
-        Add new user
+        Add new contact
       </button>
     </div>
     <div
       class="table-responsive rounded"
       style="width: 100%; max-width: 800; overflow: auto; max-height: 800px"
     >
-      <table class="table table-hover">
+      <table class="table table-hover table-bordered">
         <colgroup>
           <col style="width: 20%" />
           <col style="width: 20%" />
@@ -22,13 +23,12 @@
           <col style="width: 14%" />
           <col style="width: 30%" />
         </colgroup>
-
         <thead
           class="table-dark text-center position-sticky top-0 align-middle"
         >
           <tr>
-            <th scope="col">Full name</th>
             <th scope="col">Contact type</th>
+            <th scope="col">Full name</th>
             <th scope="col">Phone</th>
             <th scope="col" style="width: 100%; max-width: 300px">Comments</th>
             <th scope="col">Edit</th>
@@ -36,30 +36,42 @@
           </tr>
         </thead>
         <tbody class="text-center">
-          <tr *ngFor="let contact of contactList">
-            <td class="align-middle">{{ contact.name }}</td>
-            <td class="align-middle">{{ contact.type }}</td>
-            <td class="align-middle">{{ contact.phone }}</td>
-            <td class="align-middle" style="width: 100%; max-width: 300px">
+          <tr
+            *ngFor="let contact of contactList; let i = index"
+            [class]="i % 2 === 0 ? 'table-light' : ''"
+          >
+            <td class="align-middle text-start">{{ contact.type }}</td>
+            <td class="align-middle text-start">{{ contact.name }}</td>
+            <td class="align-middle text-start">{{ contact.phone }}</td>
+            <td
+              class="align-middle text-start"
+              style="
+                max-width: 300px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              "
+            >
               {{ contact.comments }}
             </td>
-            <td class="align-middle">
+            <td class="align-middle text-start">
               <button
                 type="button"
                 class="btn btn-primary"
                 data-bs-toggle="modal"
-                data-bs-target="#updateModal"
+                data-bs-target="#updateContactModal"
+                (click)="open(updateContactModal)"
               >
                 Edit
               </button>
             </td>
-            <td class="align-middle">
+            <td class="align-middle text-start">
               <button
                 type="button"
                 class="btn btn-danger"
                 data-bs-toggle="modal"
-                data-bs-target="#deleteModal"
-                (click)="handleDeleteContact(contact.id)"
+                data-bs-target="#deleteContactModal"
+                (click)="open(deleteContactModal)"
               >
                 Delete
               </button>
@@ -91,4 +103,129 @@
   </div>
 </ng-template>
 
-<app-modal-delete />
+<ng-template #deleteContactModal let-modal>
+  
+  <div class="modal-body">
+    <p>
+      Are you sure you want to delete selected records?
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel click')">No</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Ok click')">Yes</button>
+  </div>
+</ng-template>
+
+<ng-template #updateContactModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Update contact</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="mb-3">
+        <label for="dateOfBirth">Date of birth</label>
+        <div class="input-group">
+          <input type="text" placeholder="Contact name" />
+          <input type="text" placeholder="Contact name" />
+          <input type="text" placeholder="Contact name" />
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+    type="button"
+    class="btn btn-danger"
+    (click)="modal.close('Save click')"
+  >
+    Cancel
+  </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="modal.close('Save click')"
+    >
+      Save changes
+    </button>
+
+  </div>
+</ng-template>
+
+<ng-template #addContactModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Create new contact</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="container">
+        <div class="container mt-4">
+          <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="false">
+              Select contact type
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" (click)="toggleOption('person'); $event.stopPropagation()" [ngClass]="{'selected': isSelected('person')}">Person</a>
+              <a class="dropdown-item" (click)="toggleOption('public'); $event.stopPropagation()" [ngClass]="{'selected': isSelected('public')}">Public Org.</a>
+              <a class="dropdown-item" (click)="toggleOption('private'); $event.stopPropagation()" [ngClass]="{'selected': isSelected('private')}">Private Org.</a>
+            </div>
+          </div>
+          
+          <div class="mt-4">
+            <div class="col mb-3">
+              <input type="text" class="form-control" placeholder="Contact name">
+            </div>
+            <div class="col mb-3">
+              <input type="text" class="form-control" placeholder="Phone number">
+            </div>
+            <div class="col mb-3">
+              <textarea class="form-control" rows="3" placeholder="Comments"></textarea>
+            </div>
+          </div>
+          
+          <div *ngIf="isSelected('person')">
+            <input type="text" class="form-control mt-3" placeholder="Birthday">
+            <input type="text" class="form-control mt-3" placeholder="Address">
+          </div>
+          
+          <div *ngIf="isSelected('public')">
+            <input type="text" class="form-control mt-3" placeholder="Website">
+            <input type="text" class="form-control mt-3" placeholder="Open Hours">
+          </div>
+          
+          <div *ngIf="isSelected('private')">
+            <input type="text" class="form-control mt-3" placeholder="Organization Name">
+            <input type="text" class="form-control mt-3" placeholder="Industry">
+          </div>
+        </div>
+        </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+    type="button"
+    class="btn btn-danger"
+    (click)="modal.close('Save click')"
+  >
+    Cancel
+  </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="modal.close('Save click')"
+    >
+      Save changes
+    </button>
+  </div>
+</ng-template>
